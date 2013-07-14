@@ -5,6 +5,7 @@ var express = require('express');
 var path = require('path');
 var dnsd = require('native-dns');
 var levelup = require('levelup');
+var dns = require('native-dns');
 
 var records = {};
 
@@ -186,3 +187,32 @@ http.createServer(app).listen(app.get('port'), function(){
 });
 
 // -- dns stuff live here --
+var server = dns.createServer();
+
+server.on('request', function (request, response){
+    var name = request.question[0].name;
+    var rec = records[name];
+    
+    if (!rec) {
+        console.log('[-] no record for [%s]', name);
+        return ;
+    }
+    console.log('[+] serving <%s> for [%s]', rec.ip, name);
+    response.answer.push(dns.A({
+        name: name,
+        address: rec.ip,
+        ttl: 12
+    }));
+    response.send();
+});
+
+server.on('error', function (err, buff, req, res) {
+    console.log(err.stack);
+});
+
+server.on('listening', function (foo, bar){
+    console.log('[+] dns server started on [ %s ]', dnsport);
+});
+
+var dnsport = process.env.DNSPORT || 5353;
+server.serve(dnsport);
