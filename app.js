@@ -76,13 +76,6 @@ function h_je(res, data) {
     res.end(JSON.stringify(data));
 }
 
-function check_login_pass(login, pass) {
-    // crypto.createHash('sha1').update('bar').digest('hex');
-    var valid_creds = conf_secret.creds;
-    return login in valid_creds &&
-        valid_creds[login] == crypto.createHash('sha1').update(pass).digest('hex');
-}
-
 app.post('/dyn/me', basic_auth, function(req, res) {
     var regex_ip = /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/;
     var rec = (req.body.record || '').trim();
