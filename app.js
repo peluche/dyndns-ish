@@ -88,12 +88,15 @@ function dyn_me_auth(req, res, next) {
 }
 
 app.post('/dyn/me', dyn_me_auth, function(req, res) {
-    console.log('[+] dyn me %s', req.ip);
     var regex_ip = /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/;
     var rec = (req.body.record || '').trim();
     var ip = (req.ip || '').trim();
     var com = (req.body.comment || '').trim();
 
+    if (ip == '127.0.0.1') {
+        ip = (req.headers['X-Real-IP'] || '').trim();
+    }
+    console.log('[+] dyn me %s', req.ip);
     if (!rec || !ip){
         return h_je(res, {err: 'record and ip must be filled'});
     }
