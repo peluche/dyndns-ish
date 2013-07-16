@@ -1,8 +1,23 @@
+<!doctype html>
 <html>
-  <form action="/records" method="post">
-    record <input type="text" name="record">
-    ip <input type="text" name="ip">
-    comment <input type="text" name="comment">
-    <input type="submit">
-  </form>
+  <head><title>dyndns-ish</title></head>
+  <body>
+    <form action="/records" method="post">
+      <table>
+        <tr>
+          <td>record</td>
+          <td><input type="text" name="record">*</td>
+        </tr>
+        <tr>
+          <td>ip</td>
+          <td><input type="text" name="ip">*</td>
+        </tr>
+        <tr>
+          <td>comment</td>
+          <td><input type="text" name="comment"></td>
+          <td><input type="submit"></td>
+        </tr>
+      </table>
+    </form>
+  </body>
 </html>

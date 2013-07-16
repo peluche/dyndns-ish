@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+  <head><title>dyndns-ish</title></head>
+  <body>
+    <!-- TODO: -->
+    <!-- don't do this at home ! -->
+    <!-- change this ugly buggy code -->
+    <script>
+      function confirm_del(x) {
+        if (confirm('Are you sure to delete ?')) {
+          var xhr = new XMLHttpRequest();
+          xhr.open("DELETE", "/records/" + x, true);
+          xhr.send(null);
+          window.setTimeout(function(){ window.location="/list"; }, 100);
+        }
+      }
+    </script>
+    <table>
+      <tr><th>hostname</th> <th>ip</th> <th>comment</th> <th>delete</th></tr>
+      <% var x = Object.keys(records) %>
+      <% for(var i=0; i < x.length; ++i) {%>
+         <tr>
+           <% var xx = x[i] %>
+           <td><%= records[xx].record %></td>
+           <td><%= records[xx].ip %></td>
+           <td><%= records[xx].comment %></td>
+           <td><a href="javascript:confirm_del('<%= records[xx].record %>');">Delete [X]</a></td>
+         </tr>
+      <% } %>
+    </table>
+  </body>
+</html>

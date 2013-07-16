@@ -57,12 +57,16 @@ var basic_auth = express.basicAuth(function(user, pass) {
     var valid_creds = conf_secret.creds;
     return user in valid_creds &&
         valid_creds[user] == crypto.createHash('sha1').update(pass).digest('hex');
-},'');
+}, '');
 
 app.get('/', basic_auth, function(req, res) {
     // TODO rewrite me with css
     // validation, ajax and shit ...
     res.render('form.ejs', {layout: false});
+});
+
+app.get('/list', basic_auth, function(req, res) {
+    res.render('list.ejs', {records: records, layout: false});
 });
 
 function h_jm(res, data) {
