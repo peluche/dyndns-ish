@@ -53,7 +53,13 @@ app.configure('development', function() {
 
 // -- configuration end here --
 
-app.get('/', function(req, res) {
+var basic_auth = express.basicAuth(function(user, pass) {     
+    var valid_creds = conf_secret.creds;
+    return user in valid_creds &&
+        valid_creds[user] == crypto.createHash('sha1').update(pass).digest('hex');
+},'');
+
+app.get('/', basic_auth, function(req, res) {
     // TODO rewrite me with css
     // validation, ajax and shit ...
     res.render('form.ejs', {layout: false});
@@ -77,17 +83,7 @@ function check_login_pass(login, pass) {
         valid_creds[login] == crypto.createHash('sha1').update(pass).digest('hex');
 }
 
-function dyn_me_auth(req, res, next) {
-    var login = req.body.login;
-    var pass = req.body.pass;
-
-    if (!login || !pass || !check_login_pass(login, pass)) {
-        return h_je(res, {err: 'bad auth'});
-    }
-    return next();
-}
-
-app.post('/dyn/me', dyn_me_auth, function(req, res) {
+app.post('/dyn/me', basic_auth, function(req, res) {
     var regex_ip = /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/;
     var rec = (req.body.record || '').trim();
     var ip = (req.ip || '').trim();
@@ -115,7 +111,7 @@ app.post('/dyn/me', dyn_me_auth, function(req, res) {
                      });
 });
 
-app.post('/records', function(req, res) {
+app.post('/records', basic_auth, function(req, res) {
     var regex_ip = /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/;
     var rec = (req.body.record || '').trim();
     var ip = (req.body.ip || '').trim();
@@ -141,11 +137,11 @@ app.post('/records', function(req, res) {
                      });
 });
 
-app.get('/records', function(req, res){
+app.get('/records', basic_auth, function(req, res){
     return h_jm(res, { records: records });
 });
 
-app.del('/records/:rec', function(req, res){
+app.del('/records/:rec', basic_auth, function(req, res){
     var rec = req.params.rec;
 
     if (! (rec in records)){
@@ -156,7 +152,7 @@ app.del('/records/:rec', function(req, res){
     return h_jm(res, {ok: 'record deleted'});
 });
 
-app.put('/records/:rec', function(req, res){
+app.put('/records/:rec', basic_auth, function(req, res){
     var regex_ip = /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/;
     var old_rec = (req.params.rec).trim();
     var rec = (req.body.record || '').trim();
