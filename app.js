@@ -32,7 +32,7 @@ function sync2db(data) {
 // -- leveldb loaded --
 
 var app = express();
-var conf_secret = JSON.parse(fs.readFileSync('./secret/secret'));
+var conf_secret = JSON.parse(fs.readFileSync('./secret/secret.json'));
 
 app.configure(function() {
   app.set('port', process.env.PORT || 3000);
