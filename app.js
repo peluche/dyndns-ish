@@ -94,9 +94,10 @@ app.post('/dyn/me', dyn_me_auth, function(req, res) {
     var com = (req.body.comment || '').trim();
 
     if (ip == '127.0.0.1') {
-        ip = (req.headers['X-Real-IP'] || '').trim();
+        // if proxyfied by nginx
+        ip = (req.headers['x-real-ip'] || '').trim();
     }
-    console.log('[+] dyn me %s', req.ip);
+    console.log('[+] dyn me %s', ip);
     if (!rec || !ip){
         return h_je(res, {err: 'record and ip must be filled'});
     }
